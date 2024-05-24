@@ -2,22 +2,24 @@ import { defineStore } from 'pinia'
 
 export const useStore = defineStore('store', {
   state: () => ({
-    user: undefined as User | undefined,
-    token: undefined as string | undefined
+    user: undefined as User | undefined
   }),
   getters: {
     isAuthenticated(state) {
-      return !!state.user && !!state.token
+      return !!state.user
+    },
+    initials(state) {
+      if (!state.user) return 'N/A'
+
+      return `${state.user.firstName[0]}${state.user.lastName[0]}`.toUpperCase()
     }
   },
   actions: {
-    login(user: User, token: string) {
+    login(user: User) {
       this.user = user
-      this.token = token
     },
     logout() {
       this.user = undefined
-      this.token = undefined
     }
   },
   persist: true

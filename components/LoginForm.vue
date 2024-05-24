@@ -1,18 +1,27 @@
 <template>
-  <UForm :validate="validate" :state="state" class="space-y-4" @submit="onSubmit">
-    <UFormGroup label="Email" name="email">
-      <UInput v-model="state.email" />
-    </UFormGroup>
+  <div class="space-y-2">
+    <h1 class="text-2xl font-bold">Login</h1>
 
-    <UFormGroup label="Password" name="password">
-      <UInput v-model="state.password" type="password" />
-    </UFormGroup>
+    <UForm :validate="validate" :state="state" class="space-y-4" @submit="onSubmit">
+      <UFormGroup label="Email" name="email">
+        <UInput v-model="state.email" />
+      </UFormGroup>
 
-    <UButton type="submit" block> Submit </UButton>
-  </UForm>
+      <UFormGroup label="Password" name="password">
+        <UInput v-model="state.password" type="password" />
+      </UFormGroup>
+
+      <UButton type="submit" block :loading="loading">Login</UButton>
+    </UForm>
+
+    <div class="flex items-center justify-center">
+      <span class="whitespace-nowrap">Don't have an account?</span>
+      <UButton variant="link" :to="registerUrl">Register</UButton>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
-import type { FormError, FormSubmitEvent } from '#ui/types'
+import type { FormError } from '#ui/types'
 import { validateEmail, validatePassword } from '~/server/utils/validation'
 
 const state = reactive({
@@ -39,44 +48,51 @@ async function onSubmit() {
   await login()
 }
 
+const toast = useToast()
+
+const loading = ref(false)
+
 const login = async () => {
-  try {
-    const { data, error } = await useFetch<
-      {
-        user: User
-        token: string
-      },
-      {
-        statusCode: number
-        message: string
-      }
-    >('/api/login', {
-      method: 'POST',
-      body: {
-        email: state.email,
-        password: state.password
-      }
+  loading.value = true
+
+  const { data, error } = await useFetch<
+    {
+      user: User
+    },
+    FetchError
+  >('/api/login', {
+    method: 'POST',
+    body: {
+      email: state.email,
+      password: state.password
+    }
+  })
+
+  loading.value = false
+
+  if (error.value) {
+    return toast.add({
+      id: 'login-error',
+      title: error.value.statusMessage,
+      description: error.value.data.message,
+      timeout: 5000,
+      color: 'red'
     })
+  }
 
-    if (error.value) {
-      return toast.add({
-        id: 'login-error',
-        title: 'Error',
-        description: error.value.message,
-        timeout: 5000
-      })
-    }
-    if (data.value) {
-      store.login(data.value.user, data.value.token)
+  if (data.value) {
+    store.login(data.value.user)
 
-      const next = route.query.next as string | undefined
+    const next = route.query.next as string | undefined
 
-      return router.push(next || '/')
-    }
-  } catch (err) {
-    console.error(err)
+    return router.push(next || '/')
   }
 }
 
-const toast = useToast()
+const registerUrl = computed(() => {
+  return {
+    name: 'register',
+    query: { next: route.query.next }
+  }
+})
 </script>

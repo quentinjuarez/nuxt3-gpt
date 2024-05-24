@@ -2,6 +2,7 @@ import User, { IUser } from '../models/User'
 import bcrypt from 'bcrypt'
 import { validateEmail, validatePassword } from '../utils/validation'
 import { generateToken } from '../utils/jwt'
+import handleError from '../utils/handleError'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -9,37 +10,21 @@ export default defineEventHandler(async (event) => {
   const { firstName, lastName, email, password } = body
 
   if (!firstName || !lastName || !email || !password) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'All fields are required',
-      stack: undefined
-    })
+    return handleError(event, 400, 'All fields are required')
   }
 
   if (!validateEmail(email)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Invalid email address',
-      stack: undefined
-    })
+    return handleError(event, 400, 'Invalid email address')
   }
 
   if (!validatePassword(password)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Password must be at least 8 characters long',
-      stack: undefined
-    })
+    return handleError(event, 400, 'Password must be at least 8 characters long')
   }
 
   // Check if user already exists
   const existingUser: IUser | null = await User.findOne({ email })
   if (existingUser) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'User already exists',
-      stack: undefined
-    })
+    return handleError(event, 400, 'User already exists')
   }
 
   // Hash the password
@@ -59,10 +44,15 @@ export default defineEventHandler(async (event) => {
 
     const token = generateToken({ id: user._id, email: user.email })
 
+    setCookie(event, '__token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    })
+
     return {
       statusCode: 201,
       message: 'User registered successfully',
-      token,
       user: {
         id: user._id,
         firstName: user.firstName,
@@ -71,10 +61,6 @@ export default defineEventHandler(async (event) => {
       }
     }
   } catch (error) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal server error',
-      stack: undefined
-    })
+    return handleError(event, 500, 'Internal server error')
   }
 })

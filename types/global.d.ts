@@ -6,6 +6,18 @@ declare global {
     firstName: string
     lastName: string
     email: string
-    password: string
+  }
+
+  type Auth = {
+    id: string
+    email: string
+  }
+
+  type FetchError = {
+    data: {
+      statusCode: number
+      message: string
+    }
+    statusMessage: string
   }
 }
