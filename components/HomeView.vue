@@ -1,24 +1,12 @@
 <template>
-  <div class="mb-4 flex flex-col gap-6 rounded p-4">
-    <UAvatar :src="avatarSrc" :imgClass="'object-contain'" />
+  <div class="relative flex">
+    <SideBar />
 
-    <div class="flex flex-col gap-2">
-      <h1 class="text-2xl font-bold">Welcome back, {{ store.user?.firstName }}</h1>
-      <p class="text-gray-500">Email: {{ store.user?.email }}</p>
-
-      <UButton to="/logout">Logout</UButton>
+    <div class="flex w-full flex-col items-center justify-center">
+      <h1 class="text-4xl font-bold">Welcome to the Home Page</h1>
+      <p class="mt-4 text-lg">This is a protected route</p>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-// const { data } = await useAsyncData('/api/me', () => {
-//   return $fetch('/api/me')
-// })
-
-const store = useStore()
-
-const avatarSrc = computed(() => {
-  return store.user ? avatarImg(store.user) : undefined
-})
-</script>
+<script lang="ts" setup></script>

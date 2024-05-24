@@ -12,6 +12,11 @@ export const useStore = defineStore('store', {
       if (!state.user) return 'N/A'
 
       return `${state.user.firstName[0]}${state.user.lastName[0]}`.toUpperCase()
+    },
+    username(state) {
+      if (!state.user) return 'N/A'
+
+      return `${state.user.firstName} ${state.user.lastName}`
     }
   },
   actions: {
