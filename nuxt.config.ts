@@ -12,7 +12,13 @@ export default defineNuxtConfig({
     }
   },
   css: ['assets/css/main.css'],
-  modules: ['@pinia/nuxt', 'unplugin-icons/nuxt', '@nuxt/ui', '@nuxt/eslint'],
+  modules: [
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
+    'unplugin-icons/nuxt',
+    '@nuxt/ui',
+    '@nuxt/eslint'
+  ],
   imports: {
     presets: [
       {
@@ -23,7 +29,8 @@ export default defineNuxtConfig({
     dirs: ['./store']
   },
   runtimeConfig: {
-    mongoUri: process.env.MONGO_URI
+    mongoUri: process.env.MONGO_URI,
+    jwtSecret: process.env.JWT_SECRET
   },
   vite: {
     plugins: [

@@ -6,9 +6,9 @@ import { generateToken } from '../utils/jwt'
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
-  const { firstName, lastName, email, password } = body
+  const { email, password } = body
 
-  if (!firstName || !lastName || !email || !password) {
+  if (!email || !password) {
     throw createError({
       statusCode: 400,
       statusMessage: 'All fields are required',
@@ -32,36 +32,34 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Check if user already exists
-  const existingUser: IUser | null = await User.findOne({ email })
-  if (existingUser) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'User already exists',
-      stack: undefined
-    })
-  }
-
-  // Hash the password
-  const hashedPassword: string = await bcrypt.hash(password, 10)
-
-  // Create a new user
-  const user: IUser = new User({
-    firstName,
-    lastName,
-    email,
-    password: hashedPassword
-  })
-
   try {
-    await user.save()
-    setResponseStatus(event, 201)
+    const user: IUser | null = await User.findOne({ email })
+
+    if (!user) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: 'Invalid email or password',
+        stack: undefined
+      })
+    }
+
+    const validPassword = await bcrypt.compare(password, user.password)
+
+    if (!validPassword) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: 'Invalid email or password',
+        stack: undefined
+      })
+    }
+
+    setResponseStatus(event, 200)
 
     const token = generateToken({ id: user._id, email: user.email })
 
     return {
-      statusCode: 201,
-      message: 'User registered successfully',
+      statusCode: 200,
+      message: 'User logged in successfully',
       token,
       user: {
         id: user._id,

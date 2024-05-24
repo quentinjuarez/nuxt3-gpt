@@ -1,13 +1,5 @@
 <template>
   <UForm :validate="validate" :state="state" class="space-y-4" @submit="onSubmit">
-    <UFormGroup label="First Name" name="firstName">
-      <UInput v-model="state.firstName" />
-    </UFormGroup>
-
-    <UFormGroup label="Last Name" name="lastName">
-      <UInput v-model="state.lastName" />
-    </UFormGroup>
-
     <UFormGroup label="Email" name="email">
       <UInput v-model="state.email" />
     </UFormGroup>
@@ -24,8 +16,6 @@ import type { FormError, FormSubmitEvent } from '#ui/types'
 import { validateEmail, validatePassword } from '~/server/utils/validation'
 
 const state = reactive({
-  firstName: undefined,
-  lastName: undefined,
   email: undefined,
   password: undefined
 })
@@ -37,8 +27,6 @@ const route = useRoute()
 
 const validate = (state: any): FormError[] => {
   const errors = []
-  if (!state.firstName) errors.push({ path: 'firstName', message: 'Required' })
-  if (!state.lastName) errors.push({ path: 'lastName', message: 'Required' })
   if (!state.email) errors.push({ path: 'email', message: 'Required' })
   else if (!validateEmail(state.email)) errors.push({ path: 'email', message: 'Invalid email' })
   if (!state.password) errors.push({ path: 'password', message: 'Required' })
@@ -47,11 +35,11 @@ const validate = (state: any): FormError[] => {
   return errors
 }
 
-async function onSubmit(event: FormSubmitEvent<any>) {
-  await register()
+async function onSubmit() {
+  await login()
 }
 
-const register = async () => {
+const login = async () => {
   try {
     const { data, error } = await useFetch<
       {
@@ -62,11 +50,9 @@ const register = async () => {
         statusCode: number
         message: string
       }
-    >('/api/register', {
+    >('/api/login', {
       method: 'POST',
       body: {
-        firstName: state.firstName,
-        lastName: state.lastName,
         email: state.email,
         password: state.password
       }
@@ -74,7 +60,7 @@ const register = async () => {
 
     if (error.value) {
       return toast.add({
-        id: 'register-error',
+        id: 'login-error',
         title: 'Error',
         description: error.value.message,
         timeout: 5000
