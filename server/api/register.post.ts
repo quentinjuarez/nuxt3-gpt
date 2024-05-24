@@ -8,33 +8,37 @@ export default defineEventHandler(async (event) => {
   const { firstName, lastName, email, password } = body
 
   if (!firstName || !lastName || !email || !password) {
-    return {
-      status: 400,
-      message: 'All fields are required'
-    }
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'All fields are required',
+      stack: undefined
+    })
   }
 
   if (!validateEmail(email)) {
-    return {
-      status: 400,
-      message: 'Invalid email'
-    }
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid email address',
+      stack: undefined
+    })
   }
 
   if (!validatePassword(password)) {
-    return {
-      status: 400,
-      message: 'Password must be at least 6 characters long'
-    }
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Password must be at least 8 characters long',
+      stack: undefined
+    })
   }
 
   // Check if user already exists
   const existingUser: IUser | null = await User.findOne({ email })
   if (existingUser) {
-    return {
-      status: 400,
-      message: 'User already exists'
-    }
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'User already exists',
+      stack: undefined
+    })
   }
 
   // Hash the password
@@ -50,8 +54,9 @@ export default defineEventHandler(async (event) => {
 
   try {
     await user.save()
+    setResponseStatus(event, 201)
     return {
-      status: 201,
+      statusCode: 201,
       message: 'User registered successfully',
       user: {
         id: user._id,
@@ -61,9 +66,10 @@ export default defineEventHandler(async (event) => {
       }
     }
   } catch (error) {
-    return {
-      status: 500,
-      message: 'Internal server error'
-    }
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Internal server error',
+      stack: undefined
+    })
   }
 })
