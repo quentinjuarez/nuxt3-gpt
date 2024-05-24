@@ -1,11 +1,11 @@
 <template>
   <ClientOnly>
     <button
-      class="bg-transparent px-2 py-1 focus:outline-transparent bg-white dark:bg-black text-black dark:text-white rounded-md hover:text-primary"
+      class="rounded-md bg-white px-2 py-1 text-black hover:text-emerald-500 focus:outline-transparent dark:bg-black dark:text-white"
       @click="(e) => toggleDark()"
     >
-      <carbon:moon class="h-5 w-5" v-if="isDark" />
-      <carbon:sun class="h-5 w-5" v-else />
+      <carbon:moon v-if="isDark" class="size-5" />
+      <carbon:sun v-else class="size-5" />
     </button>
   </ClientOnly>
 </template>

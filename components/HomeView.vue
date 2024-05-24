@@ -1,9 +1,11 @@
 <template>
   <div class="mb-4 flex flex-col gap-6 rounded p-4">
-    <h1 class="font-medium text-2xl">Serverless Functions</h1>
+    <h1 class="text-2xl font-medium">Serverless Functions</h1>
     <h2 class="text-base">
       Create a Serverless Functions in
-      <a class="text-primary hover:underline" href="api/health" target="_blank"> server/api.ts </a>
+      <a class="text-emerald-500 hover:underline" href="api/health" target="_blank">
+        server/api.ts
+      </a>
     </h2>
 
     <code>{{ data }}</code>

@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     }
   },
   css: ['assets/css/main.css'],
-  modules: ['@pinia/nuxt', 'unplugin-icons/nuxt', '@nuxt/ui'],
+  modules: ['@pinia/nuxt', 'unplugin-icons/nuxt', '@nuxt/ui', '@nuxt/eslint'],
   imports: {
     presets: [
       {

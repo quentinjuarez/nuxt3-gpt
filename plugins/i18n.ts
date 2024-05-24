@@ -3,6 +3,7 @@ import { createI18n } from 'vue-i18n'
 export default defineNuxtPlugin(async ({ vueApp }) => {
   const locales = ['en', 'fr']
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const messages: any = {}
 
   for (const locale of locales) {
