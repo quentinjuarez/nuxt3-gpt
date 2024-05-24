@@ -22,6 +22,9 @@ export default defineNuxtConfig({
     ],
     dirs: ['./store']
   },
+  runtimeConfig: {
+    mongoUri: process.env.MONGO_URI
+  },
   vite: {
     plugins: [
       ViteComponents({
