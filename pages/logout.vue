@@ -7,9 +7,9 @@ const store = useStore()
 
 const router = useRouter()
 
-await useAsyncData('/api/logout', async () => {
+await useAsyncData('/api/auth/logout', async () => {
   store.logout()
-  await $fetch('/api/logout')
+  await $fetch('/api/auth/logout')
 
   router.push('/')
 })

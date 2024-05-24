@@ -8,6 +8,13 @@ declare global {
     email: string
   }
 
+  type Conversation = {
+    id: string
+    userId: string
+    templateId: string
+    chats: Chat[]
+  }
+
   type Auth = {
     id: string
     email: string
@@ -20,4 +27,11 @@ declare global {
     }
     statusMessage: string
   }
+
+  type FetchResponse<T> = {
+    statusCode: number
+    message: string
+  } & T
+
+  type FetchResult<T> = FetchResponse<T> | FetchError
 }

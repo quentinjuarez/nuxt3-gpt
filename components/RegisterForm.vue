@@ -67,11 +67,11 @@ const register = async () => {
   loading.value = true
 
   const { data, error } = await useFetch<
-    {
+    FetchResponse<{
       user: User
-    },
+    }>,
     FetchError
-  >('/api/register', {
+  >('/api/auth/register', {
     method: 'POST',
     body: {
       firstName: state.firstName,

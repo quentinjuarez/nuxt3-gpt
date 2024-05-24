@@ -1,8 +1,8 @@
-import User, { IUser } from '../models/User'
+import User, { IUser } from '../../models/User'
 import bcrypt from 'bcrypt'
-import { validateEmail, validatePassword } from '../utils/validation'
-import { generateToken } from '../utils/jwt'
-import handleError from '../utils/handleError'
+import { validateEmail, validatePassword } from '../../utils/validation'
+import { generateToken } from '../../utils/jwt'
+import handleError from '../../utils/handleError'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)

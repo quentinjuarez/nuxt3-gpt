@@ -60,7 +60,7 @@ const login = async () => {
       user: User
     },
     FetchError
-  >('/api/login', {
+  >('/api/auth/login', {
     method: 'POST',
     body: {
       email: state.email,
