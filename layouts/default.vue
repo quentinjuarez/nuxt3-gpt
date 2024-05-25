@@ -2,7 +2,7 @@
   <div class="relative flex">
     <SideBar />
 
-    <div class="p-8">
+    <div class="w-full">
       <slot />
     </div>
   </div>

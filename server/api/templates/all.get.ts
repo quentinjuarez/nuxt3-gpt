@@ -1,3 +1,4 @@
+import resolveIds from '~/server/utils/resolveIds'
 import Template, { ITemplate } from '../../models/Template'
 
 export default defineEventHandler(async (event) => {
@@ -16,7 +17,7 @@ export default defineEventHandler(async (event) => {
   const templates = result.map((template) => ({
     id: template._id,
     title: template.title,
-    steps: template.steps,
+    steps: resolveIds(template.steps),
     draft: template.draft
   }))
 

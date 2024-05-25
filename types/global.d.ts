@@ -54,5 +54,5 @@ declare global {
     message: string
   } & T
 
-  type FetchResult<T> = FetchResponse<T> | FetchError
+  type FetchResult<T> = FetchResponse<T>
 }

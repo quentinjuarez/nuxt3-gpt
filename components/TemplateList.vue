@@ -1,21 +1,27 @@
 <template>
   <div class="space-y-2 p-2">
-    <div class="space-y-2">
-      <UButton
-        v-for="template in store.templates"
-        :key="template.id"
-        :to="`/t/${template.id}`"
-        :color="focusId === template.id ? 'emerald' : 'white'"
-        :variant="focusId === template.id ? 'outline' : 'ghost'"
-        class="flex items-center gap-2"
-      >
-        <UAvatar :src="avatarSrc(template)" />
-        <span>{{ template.title }}</span>
-      </UButton>
+    <div v-if="pending" class="text-center">
+      {{ 'Loading...' }}
     </div>
 
-    <div v-if="!store.templates.length" class="text-cool-500 text-center">
-      {{ 'No templates' }}
+    <div v-else-if="data">
+      <div class="space-y-2">
+        <UButton
+          v-for="template in data.templates"
+          :key="template.id"
+          :to="`/t/${template.id}`"
+          :color="focusId === template.id ? 'emerald' : 'white'"
+          :variant="focusId === template.id ? 'outline' : 'ghost'"
+          class="flex items-center gap-2"
+        >
+          <UAvatar :src="avatarSrc(template)" />
+          <span>{{ template.title }}</span>
+        </UButton>
+      </div>
+
+      <div v-if="!data.templates.length" class="text-cool-500 text-center">
+        {{ 'No templates' }}
+      </div>
     </div>
 
     <UButton
@@ -60,4 +66,14 @@ onMounted(() => {
     left: 'bot.ia'
   })
 })
+
+const { pending, data, refresh } =
+  useFetch<FetchResponse<{ templates: Template[] }>>('/api/templates/all')
+
+watch(
+  () => route.fullPath,
+  () => {
+    refresh()
+  }
+)
 </script>
