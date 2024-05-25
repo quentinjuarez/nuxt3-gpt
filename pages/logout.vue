@@ -3,6 +3,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: 'empty'
+})
+
 const store = useStore()
 
 const router = useRouter()

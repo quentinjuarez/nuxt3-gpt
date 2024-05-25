@@ -7,12 +7,17 @@ const stringColor = (str: string, s = 70, l = 50) => {
   return `hsl(${h},${s}%,${l}%)`
 }
 
-const avatarImg = ({ firstName, lastName }: { firstName: string; lastName: string }) => {
-  const username = `${firstName} ${lastName}`.trim()
-  const initials = `${firstName[0]}${lastName[0]}`.toUpperCase()
-
-  const right = stringColor(firstName)
-  const left = stringColor(username)
+const avatarImg = ({
+  right,
+  left,
+  initials
+}: {
+  right: string
+  left: string
+  initials?: string
+}) => {
+  const rightColor = stringColor(right)
+  const leftColor = stringColor(left)
 
   // generate base64 image gradient
   const canvas = document.createElement('canvas')
@@ -23,11 +28,13 @@ const avatarImg = ({ firstName, lastName }: { firstName: string; lastName: strin
 
   const gradient = ctx.createLinearGradient(0, 0, 256, 256)
 
-  gradient.addColorStop(0, left)
-  gradient.addColorStop(1, right)
+  gradient.addColorStop(0, rightColor)
+  gradient.addColorStop(1, leftColor)
 
   ctx.fillStyle = gradient
   ctx.fillRect(0, 0, 256, 256)
+
+  if (!initials) return canvas.toDataURL()
 
   ctx.fillStyle = 'white'
   ctx.font = '128px Arial'

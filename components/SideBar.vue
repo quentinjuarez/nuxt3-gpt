@@ -3,6 +3,10 @@
     <div class="flex h-full flex-col justify-between">
       <div class="">
         <AppLogo />
+
+        <TemplateList />
+
+        <ConversationList />
       </div>
 
       <UserMenu />

@@ -2,7 +2,9 @@
   <div
     class="text-cool-950 bg-cool-50 dark:bg-cool-900 dark:text-cool-50 min-h-screen w-full font-custom"
   >
-    <NuxtPage />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
 
     <UNotifications />
   </div>

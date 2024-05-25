@@ -1,7 +1,9 @@
 <template>
-  <div class="flex items-center justify-center p-4">
-    <RegisterForm class="w-full max-w-screen-sm" />
-  </div>
+  <RegisterForm />
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+definePageMeta({
+  layout: 'auth'
+})
+</script>

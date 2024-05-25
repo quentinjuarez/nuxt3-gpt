@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
   try {
     setResponseStatus(event, 200)
 
-    const token = generateToken({ id: user._id, email: user.email })
+    const token = generateToken(user)
 
     setCookie(event, '__token', token, {
       httpOnly: true,
@@ -55,7 +55,8 @@ export default defineEventHandler(async (event) => {
         id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
-        email: user.email
+        email: user.email,
+        isAdmin: user.isAdmin
       }
     }
   } catch (error) {

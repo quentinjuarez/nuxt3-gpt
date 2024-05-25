@@ -7,9 +7,10 @@ export interface ITemplateStep extends Document {
 export interface ITemplate extends Document {
   title: string
   steps: ITemplateStep[]
+  draft: boolean
 }
 
-const chatSchema: Schema = new mongoose.Schema(
+const stepSchema: Schema = new mongoose.Schema(
   {
     instruction: {
       type: String,
@@ -21,12 +22,16 @@ const chatSchema: Schema = new mongoose.Schema(
 
 const templateSchema: Schema = new mongoose.Schema(
   {
-    chats: {
-      type: [chatSchema],
+    title: {
+      type: String,
       required: true
     },
-    templateId: {
-      type: String,
+    steps: {
+      type: [stepSchema],
+      required: true
+    },
+    draft: {
+      type: Boolean,
       required: true
     }
   },

@@ -19,7 +19,15 @@
 <script lang="ts" setup>
 const store = useStore()
 
-const avatarSrc = computed(() => {
-  return store.user ? avatarImg(store.user) : undefined
+const avatarSrc = ref('')
+
+onMounted(() => {
+  if (!store.user) return
+
+  avatarSrc.value = avatarImg({
+    right: store.user.id,
+    left: store.user.email,
+    initials: store.initials
+  })
 })
 </script>

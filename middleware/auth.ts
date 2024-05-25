@@ -5,4 +5,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
     const next = to.fullPath ? `?next=${to.fullPath}` : ''
     return navigateTo('/login' + next)
   }
+
+  return
 })

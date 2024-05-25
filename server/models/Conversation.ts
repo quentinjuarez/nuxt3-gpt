@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose'
 export interface IChat extends Document {
   message: string
   senderId: string
+  stepId: string
 }
 
 export interface IConversation extends Document {
@@ -18,6 +19,10 @@ const chatSchema: Schema = new mongoose.Schema(
       required: true
     },
     senderId: {
+      type: String,
+      required: true
+    },
+    stepId: {
       type: String,
       required: true
     }
