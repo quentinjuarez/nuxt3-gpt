@@ -1,5 +1,5 @@
 import { isValidObjectId } from 'mongoose'
-import Template from '../../models/Template'
+import Conversation, { IConversation } from '../../models/Conversation'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -10,22 +10,19 @@ export default defineEventHandler(async (event) => {
     const { id } = getRouterParams(event)
 
     if (!isValidObjectId(id)) {
-      return handleError(event, 400, 'Invalid template id')
+      return handleError(event, 400, 'Invalid conversation id')
     }
 
-    if (!isAdmin(event)) {
-      return handleError(event, 403, 'Forbidden')
-    }
+    const conversation: IConversation | null = await Conversation.findById(id)
 
-    const result = await Template.deleteOne({ _id: id })
-
-    if (!result.deletedCount) {
-      return handleError(event, 404, 'Template not found')
+    if (!conversation) {
+      return handleError(event, 404, 'Conversation not found')
     }
 
     return {
       statusCode: 200,
-      message: 'Template deleted successfully'
+      message: 'Conversation fetched successfully',
+      conversation: conversationResolver(conversation)
     }
   } catch (error) {
     return handleError(event, 500, 'Internal server error')

@@ -51,13 +51,7 @@ export default defineEventHandler(async (event) => {
     return {
       statusCode: 200,
       message: 'User logged in successfully',
-      user: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        isAdmin: user.isAdmin
-      }
+      user: userResolver(user)
     }
   } catch (error) {
     return handleError(event, 500, 'Internal server error')

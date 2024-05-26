@@ -5,7 +5,7 @@
         <UButton
           v-for="conversation in data.conversations"
           :key="conversation.id"
-          :to="`/t/${conversation.id}`"
+          :to="`/c/${conversation.id}`"
           :color="focusId === conversation.id ? 'emerald' : 'white'"
           :variant="focusId === conversation.id ? 'outline' : 'ghost'"
           class="flex items-center gap-2"

@@ -48,6 +48,6 @@ const conversationSchema: Schema = new mongoose.Schema(
   { timestamps: true, collection: 'conversions' }
 )
 
-const Conversation = mongoose.model<IChat>('Conversation', conversationSchema)
+const Conversation = mongoose.model<IConversation>('Conversation', conversationSchema)
 
 export default Conversation

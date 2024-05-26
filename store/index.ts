@@ -2,7 +2,9 @@ import { defineStore } from 'pinia'
 
 export const useStore = defineStore('store', {
   state: () => ({
-    user: undefined as User | undefined
+    user: undefined as User | undefined,
+    conversations: [] as Conversation[],
+    templates: [] as Template[]
   }),
   getters: {
     isAuthenticated(state) {
@@ -25,6 +27,15 @@ export const useStore = defineStore('store', {
     },
     logout() {
       this.user = undefined
+    },
+    setConversations(conversations: Conversation[]) {
+      this.conversations = conversations
+    },
+    setTemplates(templates: Template[]) {
+      this.templates = templates
+    },
+    addTemplate(template: Template) {
+      this.templates.push(template)
     }
   },
   persist: true

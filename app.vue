@@ -1,6 +1,6 @@
 <template>
   <div
-    class="text-cool-950 bg-cool-50 dark:bg-cool-900 dark:text-cool-50 min-h-screen w-full font-custom"
+    class="text-cool-950 dark:bg-cool-900 dark:text-cool-50 min-h-screen w-full bg-white font-custom"
   >
     <NuxtLayout>
       <NuxtPage />

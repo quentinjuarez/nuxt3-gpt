@@ -1,34 +1,25 @@
-import resolveIds from '~/server/utils/resolveIds'
 import Template, { ITemplate } from '../../models/Template'
 
 export default defineEventHandler(async (event) => {
-  const res = isAuth(event)
+  try {
+    if (!isAuth(event)) {
+      return handleError(event, 401, 'Unauthorized')
+    }
 
-  if (!res) {
-    return handleError(event, 401, 'Unauthorized')
-  }
+    const admin = isAdmin(event)
 
-  const admin = isAdmin(event)
+    const filter = admin ? {} : { draft: false }
 
-  const filter = admin ? {} : { draft: false }
+    const result: ITemplate[] = await Template.find(filter)
 
-  const result: ITemplate[] = await Template.find(filter)
+    const templates = result.map(templateResolver)
 
-  const templates = result.map((template) => ({
-    id: template._id,
-    title: template.title,
-    steps: resolveIds(
-      template.stepIds.map((stepId) => {
-        const step = template.steps.find((s) => String(s._id) === stepId)
-        return step
-      })
-    ),
-    draft: template.draft
-  }))
-
-  return {
-    statusCode: 200,
-    message: 'Templates fetched successfully',
-    templates
+    return {
+      statusCode: 200,
+      message: 'Templates fetched successfully',
+      templates
+    }
+  } catch (error) {
+    return handleError(event, 500, 'Internal server error')
   }
 })

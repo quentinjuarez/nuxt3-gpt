@@ -16,8 +16,8 @@ const avatarImg = ({
   left: string
   initials?: string
 }) => {
-  const rightColor = stringColor(right)
-  const leftColor = stringColor(left)
+  const rightColor = right === 'default' ? '#6B7280' : stringColor(right)
+  const leftColor = left === 'default' ? '#e5e7eb' : stringColor(left)
 
   // generate base64 image gradient
   const canvas = document.createElement('canvas')

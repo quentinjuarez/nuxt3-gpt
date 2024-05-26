@@ -1,16 +1,11 @@
 import Template, { ITemplate } from '~/server/models/Template'
-import resolveIds from '~/server/utils/resolveIds'
 
 export default defineEventHandler(async (event) => {
-  const res = isAuth(event)
-
-  if (!res) {
+  if (!isAuth(event)) {
     return handleError(event, 401, 'Unauthorized')
   }
 
-  const admin = isAdmin(event)
-
-  if (!admin) {
+  if (!isAdmin(event)) {
     return handleError(event, 403, 'Forbidden')
   }
 
@@ -48,17 +43,7 @@ export default defineEventHandler(async (event) => {
     return {
       statusCode: 201,
       message: 'Template updated successfully',
-      template: {
-        id: template._id,
-        title: template.title,
-        steps: resolveIds(
-          template.stepIds.map((stepId) => {
-            const step = template.steps.find((s) => String(s._id) === stepId)
-            return step
-          })
-        ),
-        draft: template.draft
-      }
+      template: templateResolver(template)
     }
   } catch (error) {
     return handleError(event, 500, 'Internal server error')

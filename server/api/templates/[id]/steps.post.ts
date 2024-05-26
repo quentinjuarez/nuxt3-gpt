@@ -1,28 +1,23 @@
 import Template, { ITemplate } from '~/server/models/Template'
-import resolveIds from '~/server/utils/resolveIds'
 
 export default defineEventHandler(async (event) => {
-  const res = isAuth(event)
-
-  if (!res) {
-    return handleError(event, 401, 'Unauthorized')
-  }
-
-  const admin = isAdmin(event)
-
-  if (!admin) {
-    return handleError(event, 403, 'Forbidden')
-  }
-
-  const body = await readBody(event)
-
-  if (!body.instruction) {
-    return handleError(event, 400, 'Instruction is required')
-  }
-
-  const { id } = getRouterParams(event)
-
   try {
+    if (!isAuth(event)) {
+      return handleError(event, 401, 'Unauthorized')
+    }
+
+    if (!isAdmin(event)) {
+      return handleError(event, 403, 'Forbidden')
+    }
+
+    const body = await readBody(event)
+
+    if (!body.instruction) {
+      return handleError(event, 400, 'Instruction is required')
+    }
+
+    const { id } = getRouterParams(event)
+
     const template: ITemplate | null = await Template.findByIdAndUpdate(
       id,
       {
@@ -64,12 +59,7 @@ export default defineEventHandler(async (event) => {
     return {
       statusCode: 201,
       message: 'Template created successfully',
-      template: {
-        id: updatedTemplate._id,
-        title: updatedTemplate.title,
-        steps: resolveIds(updatedTemplate.steps),
-        draft: updatedTemplate.draft
-      }
+      template: templateResolver(updatedTemplate)
     }
   } catch (error) {
     return handleError(event, 500, 'Internal server error')

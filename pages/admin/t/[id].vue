@@ -24,7 +24,34 @@
     </div>
 
     <div class="w-full max-w-screen-sm space-y-2 p-6">
-      <h1 class="text-4xl font-bold">{{ data.template.title }}</h1>
+      <div v-if="!editTitle" class="flex items-center gap-2">
+        <h1 class="text-4xl font-bold">{{ data.template.title }}</h1>
+
+        <UButton @click="handleEditTitle" square>
+          <UIcon name="i-heroicons-pencil" />
+        </UButton>
+      </div>
+      <UForm
+        v-else
+        :validate="validate"
+        :state="validateTitle"
+        @submit="updateTitle"
+        class="flex items-end gap-2"
+      >
+        <UFormGroup label="Title" name="title">
+          <UInput v-model="titleState.title" autofocus />
+        </UFormGroup>
+
+        <div class="flex items-center gap-2 pb-px">
+          <UButton size="md" color="white" @click="editTitle = !editTitle" square>
+            <UIcon name="i-heroicons-x-mark" />
+          </UButton>
+
+          <UButton size="md" type="submit" :loading="loading" @click="updateTitle" square>
+            <UIcon :name="loading ? 'i-heroicons-refresh' : 'i-heroicons-check'" />
+          </UButton>
+        </div>
+      </UForm>
 
       <div class="border-cool-200 dark:border-cool-700 space-y-2 border-b pb-4">
         <div v-for="(step, index) in data.template.steps" :key="step.id" class="space-y-2">
@@ -221,6 +248,49 @@ const updateDraft = async () => {
     data.value.template = response.template
   } catch (error) {
     errorToast(error)
+  }
+}
+
+// TITLE
+const titleState = reactive({
+  title: ''
+})
+const editTitle = ref(false)
+const loadingTitle = ref(false)
+
+const validateTitle = (state: any): FormError[] => {
+  const errors = []
+  if (!state.title) errors.push({ path: 'title', message: 'Required' })
+
+  return errors
+}
+
+const handleEditTitle = () => {
+  editTitle.value = true
+  titleState.title = data.value?.template.title as string
+}
+
+const updateTitle = async () => {
+  try {
+    loadingTitle.value = true
+    const response = await $fetch<FetchResult<{ template: Template }>>(
+      `/api/templates/${route.params.id}`,
+      {
+        method: 'PUT',
+        body: {
+          title: titleState.title
+        }
+      }
+    )
+
+    if (!data.value || !response) return
+
+    data.value.template = response.template
+    editTitle.value = false
+  } catch (error) {
+    errorToast(error)
+  } finally {
+    loadingTitle.value = false
   }
 }
 
