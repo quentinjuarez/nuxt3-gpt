@@ -1,11 +1,11 @@
 <template>
-  <div class="space-y-2 p-2">
+  <div class="space-y-2">
     <div v-if="data">
       <div class="space-y-2">
         <UButton
           v-for="template in data.templates"
           :key="template.id"
-          :to="`/t/${template.id}`"
+          :to="`/admin/t/${template.id}`"
           :color="focusId === template.id ? 'emerald' : 'white'"
           :variant="focusId === template.id ? 'outline' : 'ghost'"
           class="flex items-center gap-2"
@@ -25,7 +25,7 @@
       color="white"
       variant="ghost"
       class="flex w-full items-center gap-2"
-      to="/t/new"
+      to="/admin/t/new"
     >
       <UAvatar :src="defaultSrc" />
       <span>New template</span>

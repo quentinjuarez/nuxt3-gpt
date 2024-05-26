@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-2 p-2">
+  <div class="space-y-2">
     <div v-if="data">
       <div class="space-y-2">
         <UButton

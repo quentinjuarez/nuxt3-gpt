@@ -5,8 +5,8 @@ const errorToast = (error: FetchError | any) => {
 
   toast.add({
     id,
-    title: error.statusMessage,
-    description: error.data.message,
+    title: error.statusMessage || 'Error',
+    description: error.data.message || error.message || 'An error occurred',
     timeout: 5000,
     color: 'red'
   })

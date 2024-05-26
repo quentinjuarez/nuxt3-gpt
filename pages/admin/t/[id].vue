@@ -86,7 +86,8 @@
 import type { FormError } from '#ui/types'
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: ['auth', 'admin'],
+  layout: 'default'
 })
 
 const route = useRoute()

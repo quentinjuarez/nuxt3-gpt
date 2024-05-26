@@ -16,15 +16,16 @@
 
 <script setup lang="ts">
 import type { FormError } from '#ui/types'
+
 definePageMeta({
-  middleware: 'auth'
+  middleware: ['auth', 'admin'],
+  layout: 'default'
 })
 
 const state = reactive({
   title: undefined
 })
 
-const store = useStore()
 const router = useRouter()
 const loading = ref(false)
 
@@ -39,34 +40,24 @@ async function onSubmit() {
   await createTemplate()
 }
 
-const toast = useToast()
-
 const createTemplate = async () => {
-  loading.value = true
+  try {
+    loading.value = true
 
-  const { data, error } = await useFetch<{
-    template: Template
-  }>('/api/templates/create', {
-    method: 'POST',
-    body: {
-      title: state.title
-    }
-  })
-
-  loading.value = false
-
-  if (error.value) {
-    return toast.add({
-      id: 'template-error',
-      title: error.value.statusMessage,
-      description: error.value.data.message,
-      timeout: 5000,
-      color: 'red'
+    const data = await $fetch<{
+      template: Template
+    }>('/api/templates/create', {
+      method: 'POST',
+      body: {
+        title: state.title
+      }
     })
-  }
 
-  if (data.value) {
-    router.push(`/t/${data.value?.template.id}`)
+    router.push(`/admin/t/${data.template.id}`)
+  } catch (error: any) {
+    errorToast(error)
+  } finally {
+    loading.value = false
   }
 }
 </script>
