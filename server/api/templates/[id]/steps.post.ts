@@ -23,15 +23,13 @@ export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event)
 
   try {
-    const step = {
-      instruction: body.instruction
-    }
-
     const template: ITemplate | null = await Template.findByIdAndUpdate(
       id,
       {
         $push: {
-          steps: step
+          steps: {
+            instruction: body.instruction
+          }
         }
       },
       {
@@ -43,16 +41,34 @@ export default defineEventHandler(async (event) => {
       return handleError(event, 404, 'Template not found')
     }
 
+    const newStep = template.steps[template.steps.length - 1]
+
+    const updatedTemplate: ITemplate | null = await Template.findByIdAndUpdate(
+      id,
+      {
+        $push: {
+          stepIds: newStep._id
+        }
+      },
+      {
+        new: true
+      }
+    )
+
+    if (!updatedTemplate) {
+      return handleError(event, 404, 'Template not found')
+    }
+
     setResponseStatus(event, 201)
 
     return {
       statusCode: 201,
       message: 'Template created successfully',
       template: {
-        id: template._id,
-        title: template.title,
-        steps: resolveIds(template.steps),
-        draft: template.draft
+        id: updatedTemplate._id,
+        title: updatedTemplate.title,
+        steps: resolveIds(updatedTemplate.steps),
+        draft: updatedTemplate.draft
       }
     }
   } catch (error) {

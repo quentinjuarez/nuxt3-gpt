@@ -17,7 +17,12 @@ export default defineEventHandler(async (event) => {
   const templates = result.map((template) => ({
     id: template._id,
     title: template.title,
-    steps: resolveIds(template.steps),
+    steps: resolveIds(
+      template.stepIds.map((stepId) => {
+        const step = template.steps.find((s) => String(s._id) === stepId)
+        return step
+      })
+    ),
     draft: template.draft
   }))
 

@@ -66,8 +66,6 @@ const createTemplate = async () => {
   }
 
   if (data.value) {
-    store.addTemplate(data.value.template)
-
     router.push(`/t/${data.value?.template.id}`)
   }
 }

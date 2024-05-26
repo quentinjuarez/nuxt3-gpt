@@ -7,6 +7,7 @@ export interface ITemplateStep extends Document {
 export interface ITemplate extends Document {
   title: string
   steps: ITemplateStep[]
+  stepIds: string[]
   draft: boolean
 }
 
@@ -28,6 +29,10 @@ const templateSchema: Schema = new mongoose.Schema(
     },
     steps: {
       type: [stepSchema],
+      required: true
+    },
+    stepIds: {
+      type: [String],
       required: true
     },
     draft: {

@@ -3,9 +3,9 @@
     <div class="flex h-full flex-col justify-between">
       <div class="">
         <AppLogo />
-
+        <hr class="my-2" />
         <TemplateList />
-
+        <hr class="my-2" />
         <ConversationList />
       </div>
 

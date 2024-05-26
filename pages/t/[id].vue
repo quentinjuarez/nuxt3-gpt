@@ -228,8 +228,6 @@ watch(
   data,
   () => {
     if (data.value?.template) {
-      console.log('data.value.template.draft', data.value.template.draft)
-
       published.value = !data.value.template.draft
     }
   },

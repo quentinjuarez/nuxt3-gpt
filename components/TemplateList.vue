@@ -1,10 +1,6 @@
 <template>
   <div class="space-y-2 p-2">
-    <div v-if="pending" class="text-center">
-      {{ 'Loading...' }}
-    </div>
-
-    <div v-else-if="data">
+    <div v-if="data">
       <div class="space-y-2">
         <UButton
           v-for="template in data.templates"
