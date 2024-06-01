@@ -1,7 +1,7 @@
 <template>
-  <div class="flex w-full flex-col items-center justify-center">
+  <div class="flex h-full w-full flex-col items-center justify-center">
     <h1 class="text-4xl font-bold">Welcome to the Home Page</h1>
-    <p class="mt-4 text-lg">This is a protected route</p>
+    <p class="mt-4 text-lg">Start by choosing a channel !</p>
   </div>
 </template>
 
