@@ -1,14 +1,14 @@
 <template>
   <LoadingView v-if="pending" />
 
-  <div v-else-if="data" class="relative mx-auto flex h-full max-w-screen-xl flex-col p-6">
-    <div>
+  <div v-else-if="data" class="relative mx-auto flex h-full max-w-screen-xl flex-col px-6 pt-6">
+    <div class="space-y-6">
       <div class="w-full">
         <h1 class="text-4xl font-bold">{{ data.conversation.title }}</h1>
       </div>
 
-      <div class="space-y-2">
-        <div v-for="chat in data.conversation.chats" class="space-y-2">
+      <TransitionGroup name="fade" tag="div" class="space-y-4">
+        <div v-for="chat in data.conversation.chats" class="space-y-1">
           <div class="flex items-center gap-2">
             <ItemAvatar v-if="chat.senderId === 'bot'" right="Assistant" left="IA" initials="A" />
             <ItemAvatar
@@ -25,112 +25,12 @@
             {{ chat.message }}
           </p>
         </div>
-        <div v-for="chat in data.conversation.chats" class="space-y-2">
-          <div class="flex items-center gap-2">
-            <ItemAvatar v-if="chat.senderId === 'bot'" right="Assistant" left="IA" initials="A" />
-            <ItemAvatar
-              v-else
-              :right="store.user?.id"
-              :left="store.user?.email"
-              :initials="store.initials"
-            />
-            <span class="font-bold">{{
-              chat.senderId === 'bot' ? 'Assistant' : store.user?.firstName
-            }}</span>
-          </div>
-          <p class="pl-10">
-            {{ chat.message }}
-          </p>
-        </div>
-        <div v-for="chat in data.conversation.chats" class="space-y-2">
-          <div class="flex items-center gap-2">
-            <ItemAvatar v-if="chat.senderId === 'bot'" right="Assistant" left="IA" initials="A" />
-            <ItemAvatar
-              v-else
-              :right="store.user?.id"
-              :left="store.user?.email"
-              :initials="store.initials"
-            />
-            <span class="font-bold">{{
-              chat.senderId === 'bot' ? 'Assistant' : store.user?.firstName
-            }}</span>
-          </div>
-          <p class="pl-10">
-            {{ chat.message }}
-          </p>
-        </div>
-        <div v-for="chat in data.conversation.chats" class="space-y-2">
-          <div class="flex items-center gap-2">
-            <ItemAvatar v-if="chat.senderId === 'bot'" right="Assistant" left="IA" initials="A" />
-            <ItemAvatar
-              v-else
-              :right="store.user?.id"
-              :left="store.user?.email"
-              :initials="store.initials"
-            />
-            <span class="font-bold">{{
-              chat.senderId === 'bot' ? 'Assistant' : store.user?.firstName
-            }}</span>
-          </div>
-          <p class="pl-10">
-            {{ chat.message }}
-          </p>
-        </div>
-        <div v-for="chat in data.conversation.chats" class="space-y-2">
-          <div class="flex items-center gap-2">
-            <ItemAvatar v-if="chat.senderId === 'bot'" right="Assistant" left="IA" initials="A" />
-            <ItemAvatar
-              v-else
-              :right="store.user?.id"
-              :left="store.user?.email"
-              :initials="store.initials"
-            />
-            <span class="font-bold">{{
-              chat.senderId === 'bot' ? 'Assistant' : store.user?.firstName
-            }}</span>
-          </div>
-          <p class="pl-10">
-            {{ chat.message }}
-          </p>
-        </div>
-        <div v-for="chat in data.conversation.chats" class="space-y-2">
-          <div class="flex items-center gap-2">
-            <ItemAvatar v-if="chat.senderId === 'bot'" right="Assistant" left="IA" initials="A" />
-            <ItemAvatar
-              v-else
-              :right="store.user?.id"
-              :left="store.user?.email"
-              :initials="store.initials"
-            />
-            <span class="font-bold">{{
-              chat.senderId === 'bot' ? 'Assistant' : store.user?.firstName
-            }}</span>
-          </div>
-          <p class="pl-10">
-            {{ chat.message }}
-          </p>
-        </div>
-        <div v-for="chat in data.conversation.chats" class="space-y-2">
-          <div class="flex items-center gap-2">
-            <ItemAvatar v-if="chat.senderId === 'bot'" right="Assistant" left="IA" initials="A" />
-            <ItemAvatar
-              v-else
-              :right="store.user?.id"
-              :left="store.user?.email"
-              :initials="store.initials"
-            />
-            <span class="font-bold">{{
-              chat.senderId === 'bot' ? 'Assistant' : store.user?.firstName
-            }}</span>
-          </div>
-          <p class="pl-10">
-            {{ chat.message }}
-          </p>
-        </div>
-      </div>
+      </TransitionGroup>
     </div>
 
-    <div class="dark:bg-cool-900 sticky inset-x-0 bottom-0 flex items-center gap-2 bg-white p-6">
+    <div
+      class="dark:bg-cool-900 sticky inset-x-0 bottom-0 mt-auto flex items-center gap-2 bg-white p-6"
+    >
       <UTextarea
         class="w-full"
         v-model="query"
@@ -166,20 +66,22 @@ const query = ref('')
 
 const handleClick = async () => {
   try {
-    const data = await $fetch<FetchResponse<{ conversation: Conversation }>>(
+    const response = await $fetch<FetchResponse<{ conversation: Conversation }>>(
       `/api/conversations/send`,
       {
         method: 'POST',
         body: {
-          templateId: route.params.id,
+          id: route.params.id,
           query: query.value
         }
       }
     )
 
-    store.addConversation(data.conversation)
-    router.push(`/c/${data.conversation.id}`)
+    const lastChat = response.conversation.chats[response.conversation.chats.length - 1]
+
+    data.value.conversation.chats.push(lastChat)
   } catch (error) {
+    console.log('error', error)
     errorToast(error)
   }
 }

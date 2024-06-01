@@ -1,5 +1,6 @@
 import Template, { ITemplate } from '~/server/models/Template'
-import Conversation from '~/server/models/Conversation'
+import Conversation, { IConversation } from '~/server/models/Conversation'
+import { isValidObjectId } from 'mongoose'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -9,11 +10,24 @@ export default defineEventHandler(async (event) => {
 
     const body = await readBody(event)
 
-    if (!body.templateId || !body.query) {
-      return handleError(event, 400, 'Template ID and query are required')
+    if (!body.query || !isValidObjectId(body.id)) {
+      return handleError(event, 400, 'Query or conversation id are missing')
     }
 
-    const template: ITemplate | null = await Template.findById(body.templateId)
+    const conversation: IConversation | null = await Conversation.findOne({
+      _id: body.id,
+      userId: event.context.auth.id,
+      deletedAt: null
+    })
+
+    if (!conversation) {
+      return handleError(event, 404, 'Conversation not found')
+    }
+
+    const template: ITemplate | null = await Template.findOne({
+      _id: conversation.templateId,
+      deletedAt: null
+    })
 
     if (!template) {
       return handleError(event, 404, 'Template not found')
@@ -21,32 +35,28 @@ export default defineEventHandler(async (event) => {
 
     const firstStep = template.steps[0]
 
-    const firstChat = {
-      message: firstStep.instruction,
-      senderId: 'bot',
-      stepId: template.steps[0]._id
-    }
-
-    const newChat = {
+    const nextChat = {
       message: body.query,
       senderId: event.context.auth.id,
-      stepId: template.steps[0]._id
+      stepId: firstStep._id
     }
 
-    const conversation = new Conversation({
-      userId: event.context.auth.id,
-      templateId: body.templateId,
-      chats: [firstChat, newChat]
-    })
+    const updatedConversation: IConversation | null = await Conversation.findOneAndUpdate(
+      { _id: body.id, userId: event.context.auth.id, deletedAt: null },
+      { $push: { chats: nextChat } },
+      { new: true }
+    )
 
-    await conversation.save()
+    if (!updatedConversation) {
+      return handleError(event, 404, 'Conversation update failed')
+    }
 
     setResponseStatus(event, 201)
 
     return {
       statusCode: 201,
       message: 'Template created successfully',
-      conversation: conversationResolver(conversation)
+      conversation: conversationResolver(updatedConversation)
     }
   } catch (error) {
     return handleError(event, 500, 'Internal server error')

@@ -13,7 +13,10 @@ export default defineEventHandler(async (event) => {
       return handleError(event, 400, 'Template ID and query are required')
     }
 
-    const template: ITemplate | null = await Template.findById(body.templateId)
+    const template: ITemplate | null = await Template.findOne({
+      _id: body.templateId,
+      deletedAt: null
+    })
 
     if (!template) {
       return handleError(event, 404, 'Template not found')
