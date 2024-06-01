@@ -34,7 +34,6 @@ export default defineEventHandler(async (event) => {
     }
 
     const conversation = new Conversation({
-      title: template.title,
       userId: event.context.auth.id,
       templateId: body.templateId,
       chats: [firstChat, newChat]

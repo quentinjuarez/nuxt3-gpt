@@ -1,20 +1,14 @@
 <template>
   <div class="bg-cool-50 dark:bg-cool-950 sticky bottom-0 top-0 h-screen w-72 flex-none">
     <div class="flex h-full flex-col justify-between">
-      <div class="">
+      <div>
         <AppLogo />
-        <UTabs
-          v-if="store.user?.isAdmin"
-          :items="items"
-          class="w-full p-2"
-          :modelValue="modelValue"
-          @change="handleChange"
-        >
-          <template #item="{ item }">
-            <TrainerSideBar v-if="item.key === 'trainer'" />
-            <AdminSideBar v-else-if="item.key === 'admin'" />
-          </template>
-        </UTabs>
+        <div v-if="store.user?.isAdmin" class="w-full p-2">
+          <UTabs :items="items" :modelValue="modelValue" @change="handleChange"> </UTabs>
+
+          <TrainerSideBar v-if="!modelValue" />
+          <AdminSideBar v-else />
+        </div>
 
         <div v-else class="w-full p-2">
           <TrainerSideBar />
@@ -42,10 +36,14 @@ const items = [
 const route = useRoute()
 const router = useRouter()
 
+const mounted = ref(false)
 const modelValue = ref(0)
 
 onMounted(() => {
   modelValue.value = route.path.includes('admin') ? 1 : 0
+  nextTick(() => {
+    mounted.value = true
+  })
 })
 
 // watchEffect(() => {

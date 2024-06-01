@@ -6,11 +6,17 @@ export default defineEventHandler(async (event) => {
       return handleError(event, 401, 'Unauthorized')
     }
 
-    const admin = isAdmin(event)
+    const userIsAdmin = isAdmin(event)
 
-    const filter = admin ? {} : { draft: false }
+    const { admin } = getQuery(event)
 
-    const result: ITemplate[] = await Template.find(filter)
+    if (admin && !userIsAdmin) {
+      return handleError(event, 403, 'Forbidden')
+    }
+
+    const filter = admin === 'true' ? {} : { published: true }
+
+    const result: ITemplate[] = await Template.find({ deletedAt: null, ...filter })
 
     const templates = result.map(templateResolver)
 

@@ -1,5 +1,5 @@
 import { isValidObjectId } from 'mongoose'
-import Conversation, { IConversation } from '../../models/Conversation'
+import Conversation from '../../models/Conversation'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -13,19 +13,21 @@ export default defineEventHandler(async (event) => {
       return handleError(event, 400, 'Invalid conversation id')
     }
 
-    const conversation: IConversation | null = await Conversation.findOne({
-      _id: id,
-      deletedAt: null
-    })
+    const deletedAt = new Date().toISOString()
 
-    if (!conversation) {
+    const result = await Conversation.findOneAndUpdate(
+      { _id: id, userId: event.context.auth.id },
+      { deletedAt },
+      { new: true }
+    )
+
+    if (!result) {
       return handleError(event, 404, 'Conversation not found')
     }
 
     return {
       statusCode: 200,
-      message: 'Conversation fetched successfully',
-      conversation: conversationResolver(conversation)
+      message: 'Conversation deleted successfully'
     }
   } catch (error) {
     return handleError(event, 500, 'Internal server error')

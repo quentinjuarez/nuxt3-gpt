@@ -1,5 +1,5 @@
 <template>
-  <UAvatar :src="src" />
+  <UAvatar :src="src" :imgClass="'object-contain'" />
 </template>
 
 <script setup lang="ts">

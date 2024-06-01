@@ -6,15 +6,10 @@
       class="border-cool-200 dark:border-cool-700 flex items-center justify-end gap-4 border-b p-2"
     >
       <div class="flex items-center gap-1 text-sm">
-        <span
-          :class="{
-            'text-cool-500': !published,
-            'text-emerald-500': published
-          }"
-        >
+        <span :class="published ? 'text-emerald-500' : 'text-cool-500'">
           {{ published ? 'Published' : 'Draft' }}
         </span>
-        <UToggle v-model="published" @change="updateDraft" />
+        <UToggle v-model="published" @change="updatePublished" />
       </div>
 
       <UButton @click="deleteTemplate">
@@ -117,6 +112,8 @@ definePageMeta({
   layout: 'default'
 })
 
+const store = useStore()
+
 const route = useRoute()
 const router = useRouter()
 
@@ -130,7 +127,9 @@ const deleteTemplate = async () => {
       method: 'DELETE'
     })
 
-    router.push('/')
+    store.deleteTemplate(route.params.id as string)
+
+    router.push('/admin')
   } catch (error) {
     errorToast(error)
   }
@@ -228,17 +227,17 @@ const updateStep = async () => {
   }
 }
 
-// DRAFT
+// PUBLISHED
 const published = ref(false)
 
-const updateDraft = async () => {
+const updatePublished = async () => {
   try {
     const response = await $fetch<FetchResult<{ template: Template }>>(
       `/api/templates/${route.params.id}`,
       {
         method: 'PUT',
         body: {
-          draft: !published.value
+          published: published.value
         }
       }
     )
@@ -246,6 +245,7 @@ const updateDraft = async () => {
     if (!data.value || !response) return
 
     data.value.template = response.template
+    store.updateTemplate(response.template)
   } catch (error) {
     errorToast(error)
   }
@@ -287,6 +287,7 @@ const updateTitle = async () => {
 
     data.value.template = response.template
     editTitle.value = false
+    store.updateTemplate(response.template)
   } catch (error) {
     errorToast(error)
   } finally {
@@ -299,7 +300,7 @@ watch(
   data,
   () => {
     if (data.value?.template) {
-      published.value = !data.value.template.draft
+      published.value = data.value.template.published
     }
   },
   { immediate: true }

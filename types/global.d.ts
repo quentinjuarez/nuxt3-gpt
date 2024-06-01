@@ -32,7 +32,7 @@ declare global {
     id: string
     title: string
     steps: TemplateStep[]
-    draft: boolean
+    published: boolean
   }
 
   type Auth = {

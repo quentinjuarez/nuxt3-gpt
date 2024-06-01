@@ -17,9 +17,11 @@ export default defineEventHandler(async (event) => {
       return handleError(event, 403, 'Forbidden')
     }
 
-    const result = await Template.deleteOne({ _id: id })
+    const deletedAt = new Date().toISOString()
 
-    if (!result.deletedCount) {
+    const result = await Template.findOneAndUpdate({ _id: id }, { deletedAt }, { new: true })
+
+    if (!result) {
       return handleError(event, 404, 'Template not found')
     }
 

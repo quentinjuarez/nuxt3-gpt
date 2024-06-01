@@ -10,6 +10,8 @@ export interface IConversation extends Document {
   chats: IChat[]
   templateId: string
   userId: string
+  title: string
+  deletedAt: Date
 }
 
 const chatSchema: Schema = new mongoose.Schema(
@@ -32,6 +34,10 @@ const chatSchema: Schema = new mongoose.Schema(
 
 const conversationSchema: Schema = new mongoose.Schema(
   {
+    title: {
+      type: String,
+      required: true
+    },
     chats: {
       type: [chatSchema],
       required: true
@@ -43,6 +49,10 @@ const conversationSchema: Schema = new mongoose.Schema(
     userId: {
       type: String,
       required: true
+    },
+    deletedAt: {
+      type: Date,
+      default: null
     }
   },
   { timestamps: true, collection: 'conversions' }

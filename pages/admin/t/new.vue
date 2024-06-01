@@ -22,6 +22,8 @@ definePageMeta({
   layout: 'default'
 })
 
+const store = useStore()
+
 const state = reactive({
   title: undefined
 })
@@ -52,6 +54,8 @@ const createTemplate = async () => {
         title: state.title
       }
     })
+
+    store.addTemplate(data.template)
 
     router.push(`/admin/t/${data.template.id}`)
   } catch (error: any) {

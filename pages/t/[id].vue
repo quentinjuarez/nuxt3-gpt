@@ -8,10 +8,10 @@
 
     <div class="space-y-2">
       <div class="flex items-center gap-2">
-        <CoolAvatar right="Assistant" left="IA" initials="A" />
+        <ItemAvatar right="Assistant" left="IA" initials="A" />
         <span class="font-bold">Assistant</span>
       </div>
-      <p class="pl-10">
+      <p class="pl-10" v-if="data.template.steps.length">
         {{ data.template.steps[0].instruction }}
       </p>
     </div>
@@ -44,6 +44,8 @@ definePageMeta({
   layout: 'default'
 })
 
+const store = useStore()
+
 const route = useRoute()
 const router = useRouter()
 
@@ -66,9 +68,8 @@ const handleClick = async () => {
       }
     )
 
-    const conversation = data.conversation
-
-    router.push(`/c/${conversation.id}`)
+    store.addConversation(data.conversation)
+    router.push(`/c/${data.conversation.id}`)
   } catch (error) {
     errorToast(error)
   }

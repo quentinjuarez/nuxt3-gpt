@@ -8,7 +8,10 @@ export default defineEventHandler(async (event) => {
 
     const auth = event.context.auth as Auth
 
-    const conversations: IConversation[] = await Conversation.find({ userId: auth.id })
+    const conversations: IConversation[] = await Conversation.find({
+      deletedAt: null,
+      userId: auth.id
+    })
 
     return {
       statusCode: 200,

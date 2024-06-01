@@ -23,7 +23,8 @@ export const conversationResolver = (conversation: IConversation) => {
     id: conversation._id,
     chats: resolveIds(conversation.chats),
     templateId: conversation.templateId,
-    userId: conversation.userId
+    userId: conversation.userId,
+    title: conversation.title
   }
 }
 
@@ -37,7 +38,7 @@ export const templateResolver = (template: ITemplate) => {
         return step
       })
     ),
-    draft: template.draft
+    published: template.published
   }
 }
 

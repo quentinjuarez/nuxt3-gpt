@@ -15,9 +15,13 @@ export default defineEventHandler(async (event) => {
 
     const admin = isAdmin(event)
 
-    const filter = admin ? {} : { draft: false }
+    const filter = admin ? {} : { published: true }
 
-    const template: ITemplate | null = await Template.findOne({ _id: id, ...filter })
+    const template: ITemplate | null = await Template.findOne({
+      _id: id,
+      deletedAt: null,
+      ...filter
+    })
 
     if (!template) {
       return handleError(event, 404, 'Template not found')

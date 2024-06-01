@@ -19,11 +19,11 @@ export default defineEventHandler(async (event) => {
       return handleError(event, 403, 'Forbidden')
     }
 
-    const { title, draft } = await readBody(event)
+    const { title, published } = await readBody(event)
 
     const payload = {
       ...(title !== undefined ? { title } : {}),
-      ...(draft !== undefined ? { draft } : {})
+      ...(published !== undefined ? { published } : {})
     }
 
     const template: ITemplate | null = await Template.findOneAndUpdate(

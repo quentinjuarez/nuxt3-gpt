@@ -1,23 +1,41 @@
 <template>
   <div class="space-y-2">
-    <div v-if="data">
+    <div v-if="!store.conversationsLoading">
       <div class="space-y-2">
         <UButton
-          v-for="conversation in data.conversations"
+          v-for="conversation in store.conversations"
           :key="conversation.id"
           :to="`/c/${conversation.id}`"
           :color="focusId === conversation.id ? 'emerald' : 'white'"
           :variant="focusId === conversation.id ? 'outline' : 'ghost'"
-          class="flex items-center gap-2"
+          class="group relative flex items-center gap-2"
         >
-          <UAvatar :src="avatarSrc(conversation)" />
-          <span>{{ conversation.templateId }}</span>
+          <ItemAvatar
+            :right="conversation.title"
+            :left="conversation.id"
+            :initials="conversation.title[0]"
+          />
+          <span class="truncate">{{ conversation.title }}</span>
+
+          <UButton
+            class="absolute right-2.5 opacity-0 transition-opacity group-hover:opacity-100"
+            color="red"
+            @click.prevent.stop="deleteConversation(conversation.id)"
+            square
+          >
+            <UIcon :name="loading ? 'i-heroicons-refresh' : 'i-heroicons-trash'" />
+          </UButton>
         </UButton>
       </div>
 
-      <div v-if="!data.conversations.length" class="text-cool-500 text-center">
+      <div v-if="!store.conversations.length" class="text-cool-500 text-center">
         {{ 'No conversations' }}
       </div>
+    </div>
+    <div v-else class="space-y-2">
+      <ItemSkeleton />
+      <ItemSkeleton />
+      <ItemSkeleton />
     </div>
   </div>
 </template>
@@ -26,39 +44,36 @@
 const store = useStore()
 
 const route = useRoute()
+const router = useRouter()
 
 const focusId = computed(() => {
   return route.params.id
 })
 
-const avatarSrc = (c: Conversation) => {
-  if (!mounted.value) return defaultSrc.value
-
-  return avatarImg({
-    right: c.templateId,
-    left: c.templateId + '@bot.ia'
-  })
-}
-
-const defaultSrc = ref('')
-
-const mounted = ref(false)
-
 onMounted(() => {
-  mounted.value = true
-  defaultSrc.value = avatarImg({
-    right: 'default',
-    left: 'bot.ia'
-  })
+  try {
+    store.fetchConversations()
+  } catch (error) {
+    errorToast(error)
+  }
 })
 
-const { pending, data, refresh } =
-  useFetch<FetchResponse<{ conversations: Conversation[] }>>('/api/conversations/me')
+const loading = ref(false)
 
-watch(
-  () => route.fullPath,
-  () => {
-    refresh()
+const deleteConversation = async (id: string) => {
+  try {
+    loading.value = true
+    await $fetch<FetchResult<{}>>(`/api/conversations/${id}`, {
+      method: 'DELETE'
+    })
+
+    store.deleteConversation(id)
+
+    router.push('/')
+  } catch (error) {
+    errorToast(error)
+  } finally {
+    loading.value = false
   }
-)
+}
 </script>

@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     const template = new Template({
       title: body.title,
       steps: [],
-      draft: true
+      published: false
     })
 
     await template.save()

@@ -2,7 +2,7 @@
   <UPopover class="w-full p-2">
     <UButton color="white" variant="ghost" class="w-full">
       <div class="flex items-center justify-start gap-3">
-        <UAvatar :src="avatarSrc" :imgClass="'object-contain'" />
+        <ItemAvatar :right="store.user?.id" :left="store.user?.email" :initials="store.initials" />
 
         <p class="text-lg font-bold">{{ store.user?.firstName }}</p>
       </div>
@@ -18,16 +18,4 @@
 
 <script lang="ts" setup>
 const store = useStore()
-
-const avatarSrc = ref('')
-
-onMounted(() => {
-  if (!store.user) return
-
-  avatarSrc.value = avatarImg({
-    right: store.user.id,
-    left: store.user.email,
-    initials: store.initials
-  })
-})
 </script>

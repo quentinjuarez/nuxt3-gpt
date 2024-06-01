@@ -8,7 +8,8 @@ export interface ITemplate extends Document {
   title: string
   steps: ITemplateStep[]
   stepIds: string[]
-  draft: boolean
+  published: boolean
+  deletedAt: Date
 }
 
 const stepSchema: Schema = new mongoose.Schema(
@@ -35,9 +36,13 @@ const templateSchema: Schema = new mongoose.Schema(
       type: [String],
       required: true
     },
-    draft: {
+    published: {
       type: Boolean,
       required: true
+    },
+    deletedAt: {
+      type: Date,
+      default: null
     }
   },
   { timestamps: true, collection: 'templates' }
