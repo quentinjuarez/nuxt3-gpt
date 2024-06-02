@@ -12,7 +12,7 @@ const store = useStore()
 const router = useRouter()
 
 await useAsyncData('/api/auth/logout', async () => {
-  store.logout()
+  store.setUser(undefined)
   await $fetch('/api/auth/logout')
 
   router.push('/')

@@ -1,11 +1,11 @@
+import { v4 } from 'uuid'
+
 const errorToast = (error: FetchError | any) => {
   try {
     const toast = useToast()
 
-    const id = String(Math.floor(Math.random() * 1000))
-
     toast.add({
-      id,
+      id: v4(),
       title: error.statusMessage || 'Error',
       description: error.data.message || error.message || 'An error occurred',
       timeout: 5000,

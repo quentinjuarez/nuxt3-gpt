@@ -9,8 +9,9 @@
     </UButton>
 
     <template #panel>
-      <div class="w-full p-4">
+      <div class="w-full space-y-2 p-4">
         <UButton to="/logout" class="w-full">Logout</UButton>
+        <UButton to="/account" class="w-full">Account</UButton>
       </div>
     </template>
   </UPopover>

@@ -1,7 +1,7 @@
 <template>
   <LoadingView v-if="pending" />
 
-  <div v-else-if="data" class="mx-auto flex h-full max-w-screen-xl flex-col justify-between p-6">
+  <div v-else-if="data" class="mx-auto flex h-full max-w-screen-lg flex-col justify-between p-6">
     <div class="w-full space-y-2">
       <h1 class="text-4xl font-bold">{{ data.template.title }}</h1>
     </div>

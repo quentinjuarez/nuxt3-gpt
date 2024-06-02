@@ -8,7 +8,18 @@
       </UFormGroup>
 
       <UFormGroup label="Password" name="password">
-        <UInput v-model="state.password" type="password" />
+        <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'" required>
+          <template #trailing>
+            <UButton
+              class="pointer-events-auto"
+              square
+              variant="ghost"
+              @click.stop="showPassword = !showPassword"
+            >
+              <UIcon :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" />
+            </UButton>
+          </template>
+        </UInput>
       </UFormGroup>
 
       <UButton type="submit" block :loading="loading">Login</UButton>
@@ -52,6 +63,8 @@ const toast = useToast()
 
 const loading = ref(false)
 
+const showPassword = ref(false)
+
 const login = async () => {
   loading.value = true
 
@@ -81,7 +94,7 @@ const login = async () => {
   }
 
   if (data.value) {
-    store.login(data.value.user)
+    store.setUser(data.value.user)
 
     const next = route.query.next as string | undefined
 

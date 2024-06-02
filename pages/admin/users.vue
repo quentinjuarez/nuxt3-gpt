@@ -1,12 +1,25 @@
 <template>
   <LoadingView v-if="pending" />
 
-  <div v-else-if="data" class="mx-auto flex h-full max-w-screen-xl flex-col justify-between p-6">
-    <UTable :columns="columns" :rows="data.users.items" />
+  <div v-else-if="data" class="mx-auto flex h-full max-w-screen-lg flex-col justify-between p-6">
+    <UCard>
+      <template #header>
+        <p class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+          Users administration
+        </p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage users here.</p>
+      </template>
 
-    <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-      <UPagination v-model="page" :page-count="pageCount" :total="data.users.total" />
-    </div>
+      <div class="h-[70vh] overflow-y-auto">
+        <UTable :columns="columns" :rows="data.users.items" />
+      </div>
+
+      <template #footer>
+        <div class="flex items-center justify-center">
+          <UPagination v-model="page" :page-count="pageCount" :total="data.users.total" />
+        </div>
+      </template>
+    </UCard>
   </div>
   <ErrorView v-else v-bind="error" />
 </template>

@@ -27,11 +27,8 @@ export const useStore = defineStore('store', {
     }
   },
   actions: {
-    login(user: User) {
+    setUser(user: User | undefined) {
       this.user = user
-    },
-    logout() {
-      this.user = undefined
     },
     // data fetching
     async fetchConversations() {

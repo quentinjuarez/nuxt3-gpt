@@ -18,7 +18,7 @@
       </UButton>
     </div>
 
-    <div class="w-full max-w-screen-sm space-y-2 p-6">
+    <div class="mx-auto flex h-full max-w-screen-lg flex-col justify-between space-y-6 p-6">
       <div v-if="!editTitle" class="flex items-center gap-2">
         <h1 class="text-4xl font-bold">{{ data.template.title }}</h1>
 

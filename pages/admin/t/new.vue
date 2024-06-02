@@ -1,16 +1,14 @@
 <template>
-  <div class="p-6">
-    <div class="w-96 space-y-4">
-      <h1 class="text-4xl font-bold">New template</h1>
+  <div class="mx-auto flex h-full max-w-screen-lg flex-col space-y-6 p-6">
+    <h1 class="text-4xl font-bold">New template</h1>
 
-      <UForm :validate="validate" :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormGroup label="Title" name="title">
-          <UInput v-model="state.title" autofocus />
-        </UFormGroup>
+    <UForm :validate="validate" :state="state" class="w-96 space-y-4" @submit="onSubmit">
+      <UFormGroup label="Title" name="title">
+        <UInput v-model="state.title" autofocus />
+      </UFormGroup>
 
-        <UButton type="submit" block :loading="loading">Create</UButton>
-      </UForm>
-    </div>
+      <UButton type="submit" block :loading="loading">Create</UButton>
+    </UForm>
   </div>
 </template>
 

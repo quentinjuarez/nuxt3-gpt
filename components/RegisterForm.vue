@@ -4,19 +4,30 @@
 
     <UForm :validate="validate" :state="state" class="space-y-4" @submit="onSubmit">
       <UFormGroup label="First Name" name="firstName">
-        <UInput v-model="state.firstName" />
+        <UInput v-model="state.firstName" required />
       </UFormGroup>
 
       <UFormGroup label="Last Name" name="lastName">
-        <UInput v-model="state.lastName" />
+        <UInput v-model="state.lastName" required />
       </UFormGroup>
 
       <UFormGroup label="Email" name="email">
-        <UInput v-model="state.email" />
+        <UInput v-model="state.email" required />
       </UFormGroup>
 
       <UFormGroup label="Password" name="password">
-        <UInput v-model="state.password" type="password" />
+        <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'" required>
+          <template #trailing>
+            <UButton
+              class="pointer-events-auto"
+              square
+              variant="ghost"
+              @click.stop="showPassword = !showPassword"
+            >
+              <UIcon :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" />
+            </UButton>
+          </template>
+        </UInput>
       </UFormGroup>
 
       <UButton type="submit" block :loading="loading">Register</UButton>
@@ -44,6 +55,8 @@ const router = useRouter()
 const route = useRoute()
 
 const toast = useToast()
+
+const showPassword = ref(false)
 
 const validate = (state: any): FormError[] => {
   const errors = []
@@ -93,7 +106,7 @@ const register = async () => {
     })
   }
   if (data.value) {
-    store.login(data.value.user)
+    store.setUser(data.value.user)
 
     const next = route.query.next as string | undefined
 
