@@ -55,4 +55,11 @@ declare global {
   } & T
 
   type FetchResult<T> = FetchResponse<T>
+
+  type Pagination<T> = {
+    items: T[]
+    page: number
+    pageCount: number
+    total: number
+  }
 }

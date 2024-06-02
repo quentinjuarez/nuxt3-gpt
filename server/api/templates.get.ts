@@ -1,4 +1,4 @@
-import Template, { ITemplate } from '../../models/Template'
+import Template, { ITemplate } from '../models/Template'
 
 export default defineEventHandler(async (event) => {
   try {

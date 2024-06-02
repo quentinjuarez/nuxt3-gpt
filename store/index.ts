@@ -38,7 +38,7 @@ export const useStore = defineStore('store', {
       try {
         this.conversationsLoading = true
         const { conversations } =
-          await $fetch<FetchResult<{ conversations: Conversation[] }>>('/api/conversations/me')
+          await $fetch<FetchResult<{ conversations: Conversation[] }>>('/api/conversations')
 
         this.conversations = conversations
       } catch (error) {
@@ -56,7 +56,7 @@ export const useStore = defineStore('store', {
         const params = admin ? { admin: 'true' } : {}
 
         const { templates } = await $fetch<FetchResult<{ templates: Template[] }>>(
-          '/api/templates/all',
+          '/api/templates',
           { params }
         )
 
