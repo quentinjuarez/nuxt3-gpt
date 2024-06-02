@@ -43,7 +43,7 @@
           </UButton>
 
           <UButton size="md" type="submit" :loading="loading" @click="updateTitle" square>
-            <UIcon :name="loading ? 'i-heroicons-refresh' : 'i-heroicons-check'" />
+            <UIcon :name="loading ? 'i-heroicons-arrow-path-20-solid' : 'i-heroicons-check'" />
           </UButton>
         </div>
       </UForm>

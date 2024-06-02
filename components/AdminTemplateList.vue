@@ -41,11 +41,7 @@
         <span>New template</span>
       </UButton>
     </div>
-    <div v-else class="space-y-2">
-      <ItemSkeleton />
-      <ItemSkeleton />
-      <ItemSkeleton />
-    </div>
+    <ItemSkeletonGroup v-else />
   </div>
 </template>
 

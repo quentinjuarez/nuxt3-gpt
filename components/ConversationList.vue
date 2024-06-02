@@ -22,7 +22,7 @@
               @click.prevent.stop="deleteConversation(conversation.id)"
               square
             >
-              <UIcon :name="loading ? 'i-heroicons-refresh' : 'i-heroicons-trash'" />
+              <UIcon :name="loading ? 'i-heroicons-arrow-path-20-solid' : 'i-heroicons-trash'" />
             </UButton>
           </UButton>
         </div>
@@ -32,11 +32,7 @@
         {{ 'No conversations' }}
       </div>
     </div>
-    <div v-else class="space-y-2">
-      <ItemSkeleton />
-      <ItemSkeleton />
-      <ItemSkeleton />
-    </div>
+    <ItemSkeletonGroup v-else />
   </div>
 </template>
 

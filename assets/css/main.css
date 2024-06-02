@@ -9,3 +9,39 @@
 .fade-leave-to {
   opacity: 0;
 }
+
+/* scrollbar */
+/* Define light mode colors in :root */
+:root {
+  --scrollbar-track-color: theme('colors.cool.100');
+  --scrollbar-thumb-color: theme('colors.cool.200');
+  --scrollbar-thumb-hover-color: theme('colors.cool.300');
+}
+
+/* Define dark mode colors in .dark */
+.dark {
+  --scrollbar-track-color: theme('colors.cool.800');
+  --scrollbar-thumb-color: theme('colors.cool.700');
+  --scrollbar-thumb-hover-color: theme('colors.cool.600');
+}
+
+/* Apply the CSS variables to the scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-color);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
+  border-radius: 8px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover-color);
+}
