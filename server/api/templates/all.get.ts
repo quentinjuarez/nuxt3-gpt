@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
     const { admin } = getQuery(event)
 
-    if (admin && !userIsAdmin) {
+    if (admin === 'true' && !userIsAdmin) {
       return handleError(event, 403, 'Forbidden')
     }
 

@@ -52,11 +52,12 @@ export const useStore = defineStore('store', {
     async fetchTemplates(admin = false) {
       try {
         this.templatesLoading = true
+
+        const params = admin ? { admin: 'true' } : {}
+
         const { templates } = await $fetch<FetchResult<{ templates: Template[] }>>(
           '/api/templates/all',
-          {
-            params: { admin }
-          }
+          { params }
         )
 
         this.templates = templates
