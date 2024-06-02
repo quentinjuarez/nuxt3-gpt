@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto flex h-full max-w-screen-lg flex-col p-6">
-    <UTabs :items="items" class="w-full">
+    <UTabs :items="items" class="w-full" v-model="tab">
       <template #item="{ item }">
         <UCard @submit.prevent="() => onSubmit(item.key)">
           <template #header>
@@ -73,7 +73,7 @@
           </UForm>
 
           <template #footer>
-            <UButton type="submit" :loading="loading">
+            <UButton type="submit" :loading="loading" :disabled="disabled" block>
               Save {{ item.key === 'account' ? 'account' : 'password' }}
             </UButton>
           </template>
@@ -85,6 +85,8 @@
 
 <script setup lang="ts">
 import { validateEmail, validatePassword } from '~/server/utils/validation'
+
+const tab = ref(0)
 
 const items = [
   {
@@ -173,4 +175,17 @@ const updatePassword = async () => {
     loading.value = false
   }
 }
+
+const disabled = computed(() => {
+  if (loading.value) return true
+
+  if (tab.value === 0) {
+    return (
+      accountForm.firstName === store.user?.firstName &&
+      accountForm.lastName === store.user?.lastName
+    )
+  }
+
+  return !passwordForm.currentPassword.trim() || !passwordForm.newPassword.trim()
+})
 </script>
