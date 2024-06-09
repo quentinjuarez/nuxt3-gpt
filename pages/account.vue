@@ -37,6 +37,7 @@
                 v-model="passwordForm.currentPassword"
                 :type="showCurrentPassword ? 'text' : 'password'"
                 required
+                autocomplete="current-password"
               >
                 <template #trailing>
                   <UButton
@@ -57,6 +58,7 @@
                 v-model="passwordForm.newPassword"
                 :type="showNewPassword ? 'text' : 'password'"
                 required
+                autocomplete="new-password"
               >
                 <template #trailing>
                   <UButton

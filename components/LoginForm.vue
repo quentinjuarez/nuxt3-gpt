@@ -3,12 +3,17 @@
     <h1 class="text-2xl font-bold">Login</h1>
 
     <UForm :validate="validate" :state="state" class="space-y-4" @submit="onSubmit">
-      <UFormGroup label="Email" name="email">
+      <UFormGroup label="Email" name="email" autocomplete="email">
         <UInput v-model="state.email" />
       </UFormGroup>
 
       <UFormGroup label="Password" name="password">
-        <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'" required>
+        <UInput
+          v-model="state.password"
+          :type="showPassword ? 'text' : 'password'"
+          required
+          autocomplete="current-password"
+        >
           <template #trailing>
             <UButton
               class="pointer-events-auto"

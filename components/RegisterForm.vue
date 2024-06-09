@@ -12,11 +12,16 @@
       </UFormGroup>
 
       <UFormGroup label="Email" name="email">
-        <UInput v-model="state.email" required />
+        <UInput v-model="state.email" required type="email" autocomplete="email" />
       </UFormGroup>
 
       <UFormGroup label="Password" name="password">
-        <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'" required>
+        <UInput
+          v-model="state.password"
+          :type="showPassword ? 'text' : 'password'"
+          required
+          autocomplete="new-password"
+        >
           <template #trailing>
             <UButton
               class="pointer-events-auto"
