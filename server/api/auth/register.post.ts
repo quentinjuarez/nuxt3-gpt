@@ -71,6 +71,7 @@ export default defineEventHandler(async (event) => {
       user: userResolver(user)
     }
   } catch (error) {
+    console.error(event.path, error)
     return handleError(event, 500, 'Internal server error')
   }
 })

@@ -2,6 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose'
 
 export interface ITemplateStep extends Document {
   instruction: string
+  prompt: string
 }
 
 export interface ITemplate extends Document {
@@ -15,6 +16,10 @@ export interface ITemplate extends Document {
 const stepSchema: Schema = new mongoose.Schema(
   {
     instruction: {
+      type: String,
+      required: true
+    },
+    prompt: {
       type: String,
       required: true
     }

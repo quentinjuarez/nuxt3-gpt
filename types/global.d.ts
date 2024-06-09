@@ -27,6 +27,7 @@ declare global {
   type TemplateStep = {
     id: string
     instruction: string
+    prompt: string
   }
 
   type Template = {

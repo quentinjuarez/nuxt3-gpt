@@ -30,6 +30,7 @@ export default defineEventHandler(async (event) => {
       message: 'Conversation deleted successfully'
     }
   } catch (error) {
+    console.error(event.path, error)
     return handleError(event, 500, 'Internal server error')
   }
 })

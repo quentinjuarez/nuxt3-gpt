@@ -1,4 +1,5 @@
 import Template, { ITemplate } from '~/server/models/Template'
+import { Types } from 'mongoose'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -12,19 +13,24 @@ export default defineEventHandler(async (event) => {
 
     const body = await readBody(event)
 
-    if (!body.instruction) {
-      return handleError(event, 400, 'Instruction is required')
+    if (!body.instruction || !body.prompt) {
+      return handleError(event, 400, 'Instruction and prompt are required')
     }
 
     const { id } = getRouterParams(event)
+
+    const newStepId = new Types.ObjectId()
 
     const template: ITemplate | null = await Template.findByIdAndUpdate(
       id,
       {
         $push: {
           steps: {
-            instruction: body.instruction
-          }
+            _id: newStepId,
+            instruction: body.instruction,
+            prompt: body.prompt
+          },
+          stepIds: newStepId
         }
       },
       {
@@ -36,32 +42,15 @@ export default defineEventHandler(async (event) => {
       return handleError(event, 404, 'Template not found')
     }
 
-    const newStep = template.steps[template.steps.length - 1]
-
-    const updatedTemplate: ITemplate | null = await Template.findByIdAndUpdate(
-      id,
-      {
-        $push: {
-          stepIds: newStep._id
-        }
-      },
-      {
-        new: true
-      }
-    )
-
-    if (!updatedTemplate) {
-      return handleError(event, 404, 'Template not found')
-    }
-
     setResponseStatus(event, 201)
 
     return {
       statusCode: 201,
       message: 'Template created successfully',
-      template: templateResolver(updatedTemplate)
+      template: templateResolver(template)
     }
   } catch (error) {
+    console.error(event.path, error)
     return handleError(event, 500, 'Internal server error')
   }
 })

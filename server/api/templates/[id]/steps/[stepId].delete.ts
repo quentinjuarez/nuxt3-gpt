@@ -9,29 +9,22 @@ export default defineEventHandler(async (event) => {
     return handleError(event, 403, 'Forbidden')
   }
 
-  const body = await readBody(event)
-
-  if (!body.instruction || !body.prompt) {
-    return handleError(event, 400, 'Instruction and prompt are required')
-  }
-
   const { id, stepId } = getRouterParams(event)
 
   try {
-    const updatedAt = new Date()
-
+    // pull step id
     const template: ITemplate | null = await Template.findByIdAndUpdate(
       id,
       {
-        $set: {
-          'steps.$[step].instruction': body.instruction,
-          'steps.$[step].prompt': body.prompt,
-          'steps.$[step].updatedAt': updatedAt
+        $pull: {
+          steps: {
+            _id: stepId
+          },
+          stepIds: stepId
         }
       },
       {
-        new: true,
-        arrayFilters: [{ 'step._id': stepId }]
+        new: true
       }
     )
 
@@ -39,11 +32,11 @@ export default defineEventHandler(async (event) => {
       return handleError(event, 404, 'Template not found')
     }
 
-    setResponseStatus(event, 201)
+    setResponseStatus(event, 200)
 
     return {
-      statusCode: 201,
-      message: 'Template updated successfully',
+      statusCode: 200,
+      message: 'Template deleted successfully',
       template: templateResolver(template)
     }
   } catch (error) {

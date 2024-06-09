@@ -28,6 +28,7 @@ export default defineEventHandler(async (event) => {
       conversation: conversationResolver(conversation)
     }
   } catch (error) {
+    console.error(event.path, error)
     return handleError(event, 500, 'Internal server error')
   }
 })

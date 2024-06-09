@@ -1,5 +1,5 @@
 import { IConversation } from '../models/Conversation'
-import { ITemplate } from '../models/Template'
+import { ITemplate, ITemplateStep } from '../models/Template'
 import { IUser } from '../models/User'
 
 export const resolveId = <T>(payload: T) => {
@@ -33,10 +33,12 @@ export const templateResolver = (template: ITemplate) => {
     id: template._id,
     title: template.title,
     steps: resolveIds(
-      template.stepIds.map((stepId) => {
-        const step = template.steps.find((s) => String(s._id) === stepId)
-        return step
-      })
+      template.stepIds
+        .map((stepId) => {
+          const step = template.steps.find((s) => String(s._id) === stepId)
+          return step
+        })
+        .filter(Boolean) as ITemplateStep[]
     ),
     published: template.published
   }

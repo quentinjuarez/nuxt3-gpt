@@ -26,6 +26,7 @@ export default defineEventHandler(async (event) => {
       templates
     }
   } catch (error) {
+    console.error(event.path, error)
     return handleError(event, 500, 'Internal server error')
   }
 })

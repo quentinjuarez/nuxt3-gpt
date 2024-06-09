@@ -50,39 +50,57 @@
 
       <div class="border-cool-200 dark:border-cool-700 space-y-2 border-b pb-4">
         <div v-for="(step, index) in data.template.steps" :key="step.id" class="space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="text-lg font-bold">Step {{ index + 1 }}</h3>
+
+            <div v-if="updateState.stepId === step.id" class="flex items-center gap-2">
+              <UButton color="white" @click="handleCancel"> Cancel </UButton>
+              <UButton type="submit" :loading="updateLoading" @click="updateStep"> Update </UButton>
+            </div>
+            <div v-else class="flex items-center gap-2">
+              <UButton color="red" @click="deleteStep(step.id)">Delete</UButton>
+
+              <UButton v-if="updateState.stepId !== step.id" @click="handleEdit(step.id)">
+                Edit
+              </UButton>
+            </div>
+          </div>
           <UForm
             :validate="validateUpdate"
             :state="updateState"
             class="space-y-2"
             @submit="updateStep"
           >
-            <UFormGroup :label="`Step ${index + 1}`" :name="'step-' + step.id">
-              <template #hint>
-                <div v-if="updateState.stepId === step.id" class="flex items-center gap-2">
-                  <UButton color="white" @click="handleCancel"> Cancel </UButton>
-                  <UButton type="submit" :loading="updateLoading" @click="updateStep">
-                    Update
-                  </UButton>
-                </div>
-
-                <UButton v-else @click="handleEdit(step.id)">Edit</UButton>
-              </template>
-              <template #default>
-                <UTextarea
-                  v-if="updateState.stepId === step.id"
-                  placeholder="Update instruction..."
-                  autoresize
-                  v-model="updateState.instruction"
-                  autofocus
-                />
-                <UTextarea
-                  v-else
-                  placeholder="Update instruction..."
-                  autoresize
-                  v-model="step.instruction"
-                  disabled
-                />
-              </template>
+            <UFormGroup label="Instruction" :name="`step-${step.id}-instruction`">
+              <UTextarea
+                v-if="updateState.stepId === step.id"
+                placeholder="Update instruction..."
+                autoresize
+                v-model="updateState.instruction"
+                autofocus
+              />
+              <UTextarea
+                v-else
+                placeholder="Update instruction..."
+                autoresize
+                v-model="step.instruction"
+                disabled
+              />
+            </UFormGroup>
+            <UFormGroup label="Prompt" :name="`step-${step.id}-prompt`">
+              <UTextarea
+                v-if="updateState.stepId === step.id"
+                placeholder="Update prompt..."
+                autoresize
+                v-model="updateState.prompt"
+              />
+              <UTextarea
+                v-else
+                placeholder="Update prompt..."
+                autoresize
+                v-model="step.prompt"
+                disabled
+              />
             </UFormGroup>
           </UForm>
         </div>
@@ -92,8 +110,12 @@
 
       <div>
         <UForm :validate="validate" :state="state" class="space-y-2" @submit="addStep">
-          <UFormGroup label="New step" name="instruction">
+          <UFormGroup label="New instruction" name="instruction">
             <UTextarea v-model="state.instruction" placeholder="New instruction..." autoresize />
+          </UFormGroup>
+
+          <UFormGroup label="New prompt" name="prompt">
+            <UTextarea v-model="state.prompt" placeholder="New prompt..." autoresize />
           </UFormGroup>
 
           <UButton type="submit" :loading="loading" @click="addStep">Add step</UButton>
@@ -137,12 +159,14 @@ const deleteTemplate = async () => {
 
 // NEW STEP
 const state = reactive({
-  instruction: undefined
+  instruction: undefined,
+  prompt: undefined
 })
 
 const validate = (state: any): FormError[] => {
   const errors = []
   if (!state.instruction) errors.push({ path: 'instruction', message: 'Required' })
+  if (!state.prompt) errors.push({ path: 'prompt', message: 'Required' })
 
   return errors
 }
@@ -157,7 +181,8 @@ const addStep = async () => {
       {
         method: 'POST',
         body: {
-          instruction: state.instruction
+          instruction: state.instruction,
+          prompt: state.prompt
         }
       }
     )
@@ -167,6 +192,7 @@ const addStep = async () => {
     data.value.template = response.template
 
     state.instruction = undefined
+    state.prompt = undefined
   } catch (error) {
     errorToast(error)
   } finally {
@@ -178,7 +204,8 @@ const addStep = async () => {
 const updateState = reactive<{
   stepId: string
   instruction: string
-}>({ stepId: '', instruction: '' })
+  prompt: string
+}>({ stepId: '', instruction: '', prompt: '' })
 
 const updateLoading = ref(false)
 
@@ -190,14 +217,20 @@ const validateUpdate = (state: any): FormError[] => {
 }
 
 const handleEdit = (stepId: string) => {
+  const step = data.value?.template.steps.find((step) => step.id === stepId)
+
+  if (!step) return
+
   updateState.stepId = stepId
-  updateState.instruction = data.value?.template.steps.find((step) => step.id === stepId)
-    ?.instruction as string
+  const { instruction, prompt } = step
+  updateState.instruction = instruction
+  updateState.prompt = prompt
 }
 
 const handleCancel = () => {
   updateState.stepId = ''
   updateState.instruction = ''
+  updateState.prompt = ''
 }
 
 const updateStep = async () => {
@@ -210,7 +243,8 @@ const updateStep = async () => {
       {
         method: 'PUT',
         body: {
-          instruction: updateState.instruction
+          instruction: updateState.instruction,
+          prompt: updateState.prompt
         }
       }
     )
@@ -246,6 +280,24 @@ const updatePublished = async () => {
 
     data.value.template = response.template
     store.updateTemplate(response.template)
+  } catch (error) {
+    errorToast(error)
+  }
+}
+
+// DELETE STEP
+const deleteStep = async (stepId: string) => {
+  try {
+    const response = await $fetch<FetchResult<{ template: Template }>>(
+      `/api/templates/${route.params.id}/steps/${stepId}`,
+      {
+        method: 'DELETE'
+      }
+    )
+
+    if (!data.value || !response) return
+
+    data.value.template = response.template
   } catch (error) {
     errorToast(error)
   }
