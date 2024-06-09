@@ -30,7 +30,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     mongoUri: process.env.MONGO_URI,
-    jwtSecret: process.env.JWT_SECRET
+    jwtSecret: process.env.JWT_SECRET,
+    openaiApiKey: process.env.OPENAI_API_KEY
   },
   vite: {
     plugins: [

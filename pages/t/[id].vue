@@ -11,7 +11,7 @@
         <ItemAvatar right="Assistant" left="IA" initials="A" />
         <span class="font-bold">Assistant</span>
       </div>
-      <p class="pl-10" v-if="data.template.steps.length">
+      <p v-if="data.template.steps.length" class="whitespace-pre-wrap pl-10">
         {{ data.template.steps[0].instruction }}
       </p>
     </div>

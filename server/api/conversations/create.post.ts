@@ -1,5 +1,6 @@
 import Template, { ITemplate } from '~/server/models/Template'
 import Conversation from '~/server/models/Conversation'
+import extractResponse from '~/server/utils/extractResponse'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -36,11 +37,33 @@ export default defineEventHandler(async (event) => {
       stepId: template.steps[0]._id
     }
 
+    const client = openaiClient()
+
+    const content = firstStep.prompt.replace('$input', body.query)
+
+    const stream = await client.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content }],
+      stream: true
+    })
+
+    let botResponse = ''
+
+    for await (const chunk of stream) {
+      botResponse += chunk.choices[0]?.delta?.content || ''
+    }
+
+    const botChat = {
+      message: extractResponse(botResponse),
+      senderId: 'bot',
+      stepId: firstStep._id
+    }
+
     const conversation = new Conversation({
       title: template.title,
       userId: event.context.auth.id,
       templateId: body.templateId,
-      chats: [firstChat, newChat]
+      chats: [firstChat, newChat, botChat]
     })
 
     await conversation.save()

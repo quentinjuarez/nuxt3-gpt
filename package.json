@@ -38,6 +38,7 @@
     "isomorphic-dompurify": "^2.11.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.0",
+    "openai": "^4.49.1",
     "pinia": "^2.1.7",
     "uuid": "^9.0.1",
     "vue-i18n": "^9.13.1"

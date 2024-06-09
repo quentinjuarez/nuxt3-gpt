@@ -1,6 +1,7 @@
 import Template, { ITemplate } from '~/server/models/Template'
 import Conversation, { IConversation } from '~/server/models/Conversation'
 import { isValidObjectId } from 'mongoose'
+import extractResponse from '~/server/utils/extractResponse'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -41,9 +42,31 @@ export default defineEventHandler(async (event) => {
       stepId: firstStep._id
     }
 
+    const client = openaiClient()
+
+    const content = firstStep.prompt.replace('$input', body.query)
+
+    const stream = await client.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content }],
+      stream: true
+    })
+
+    let botResponse = ''
+
+    for await (const chunk of stream) {
+      botResponse += chunk.choices[0]?.delta?.content || ''
+    }
+
+    const botChat = {
+      message: extractResponse(botResponse),
+      senderId: 'bot',
+      stepId: firstStep._id
+    }
+
     const updatedConversation: IConversation | null = await Conversation.findOneAndUpdate(
       { _id: body.id, userId: event.context.auth.id, deletedAt: null },
-      { $push: { chats: nextChat } },
+      { $push: { chats: [nextChat, botChat] } },
       { new: true }
     )
 
