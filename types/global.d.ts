@@ -11,6 +11,7 @@ declare global {
 
   type Conversation = {
     id: string
+    title: string
     userId: string
     templateId: string
     chats: Chat[]

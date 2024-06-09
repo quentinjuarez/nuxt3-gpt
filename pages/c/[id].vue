@@ -4,22 +4,22 @@
   <div v-else-if="data" class="relative mx-auto flex h-full max-w-screen-lg flex-col px-6 pt-6">
     <div class="space-y-6">
       <div class="w-full">
-        <h1 class="text-4xl font-bold">{{ data.conversation.title }}</h1>
+        <h1 class="text-4xl font-bold">{{ data.conversation?.title }}</h1>
       </div>
 
       <TransitionGroup name="fade" tag="div" class="space-y-4">
-        <div v-for="chat in data.conversation.chats" class="space-y-1">
+        <div v-for="chat in data.conversation.chats" class="space-y-1" :key="chat.id">
           <div class="flex items-center gap-2">
             <ItemAvatar v-if="chat.senderId === 'bot'" right="Assistant" left="IA" initials="A" />
             <ItemAvatar
-              v-else
-              :right="store.user?.id"
-              :left="store.user?.email"
+              v-else-if="store.user"
+              :right="store.user.id"
+              :left="store.user.email"
               :initials="store.initials"
             />
-            <span class="font-bold">{{
-              chat.senderId === 'bot' ? 'Assistant' : store.user?.firstName
-            }}</span>
+            <span class="font-bold">
+              {{ chat.senderId === 'bot' ? 'Assistant' : store.user?.firstName }}
+            </span>
           </div>
           <p class="pl-10">
             {{ chat.message }}
@@ -40,7 +40,7 @@
       >
       </UTextarea>
       <UButton @click="handleClick" square size="lg">
-        <UIcon name="i-heroicons-arrow-up" />
+        <UIcon :name="loading ? 'i-heroicons-arrow-path-20-solid' : 'i-heroicons-arrow-up'" />
       </UButton>
     </div>
   </div>
@@ -63,9 +63,11 @@ const { pending, data, error } = useFetch<
 
 // CHATS
 const query = ref('')
+const loading = ref(false)
 
 const handleClick = async () => {
   try {
+    loading.value = true
     const response = await $fetch<FetchResponse<{ conversation: Conversation }>>(
       `/api/conversations/send`,
       {
@@ -77,12 +79,32 @@ const handleClick = async () => {
       }
     )
 
+    if (!data.value) return
+
     const lastChat = response.conversation.chats[response.conversation.chats.length - 1]
 
     data.value.conversation.chats.push(lastChat)
+    query.value = ''
+    scrollToBottom()
   } catch (error) {
     console.log('error', error)
     errorToast(error)
+  } finally {
+    loading.value = false
   }
 }
+
+const scrollToBottom = () => {
+  nextTick(() => {
+    console.log('scrolling to bottom')
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth'
+    })
+  })
+}
+
+watch(pending, (newValue) => {
+  if (!newValue) scrollToBottom()
+})
 </script>
